@@ -1,0 +1,48 @@
+{{#each erros}}
+<div class="container alert alert-danger"><h4>{{texto}}</h4></div>
+{{else}}
+{{/each}}
+
+<h1>Editar Ingrediente</h1>
+<div class="card">
+    <div class="card-body">
+        <form action="/produtos/edit" method="POST">
+        <input type="hidden" name='id' value="{{produto._id}}">
+        <label for="descricao">Descrição: </label>
+        <input type="text" name="descricao" value='{{produto.descricao}}' class='form-control' required>
+        <label for="barcode">Codigo de Barras: </label>
+        <input type="number" name="barcode" value='{{produto.barcode}}'class="form-control" required>
+        <label for="apontamento">Apontamento: </label>
+        <input type="number" name="apontamento" value='{{produto.apontamento}}' class="form-control" required>
+        <label for="custo">Custo: </label>
+        <input type="text" name="custo" value='{{produto.custo}}' class="form-control custo" required>
+        <label for="estoque">Estoque: </label>
+        <input type="text" name='estoque' value='{{produto.estoque}}'class="form-control estoque" required>
+        <label for="validade">Validade: </label>
+        <input type="date" name='validade' value='{{produto.validade}}'class="form-control validade" required>
+        <button type="submit" class="btn btn-success mt-4">Editar Ingrediente!</button>
+        </form>
+    </div>
+</div>
+
+<script>
+
+const gerarApontamento = ()=> {
+    document.getElementsByName('apontamento')[0].value = parseInt(Math.random() * 10).toString() + parseInt(Math.random() * 10).toString() + parseInt(Math.random() * 10).toString() + parseInt(Math.random() * 10).toString()
+}
+
+const estoque = document.querySelector('.estoque')
+const custo = document.querySelector('.custo')
+const validade = document.querySelector('.validade')
+validade.value = '2050-12-30'
+
+function add(){
+    estoque.addEventListener('change', ()=> {
+        estoque.value = (Number.parseFloat(estoque.value.replace(',','.'))).toFixed(3)
+    })
+    custo.addEventListener('change', ()=> {
+        custo.value = (Number.parseFloat(custo.value.replace(',','.'))).toFixed(2)
+    })
+}
+add()
+</script>

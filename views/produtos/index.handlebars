@@ -1,0 +1,63 @@
+<h4 class="card-title font-weight-bold">Ingredientes</h4>
+<a href="produtos/novo"><button class="btn btn-success">Novo Ingrediente</button></a>
+{{#each produtos}}
+<div class="card mt-3 mb-3">
+    <div class="card-header">
+        {{descricao}}
+    </div>
+    <div class="card-body">
+        <div class="card-group" style="font-size: small;">
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">Codigo:</span>
+                    <span>{{barcode}}</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">Apontamento: </span>
+                    <span>{{apontamento}}</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">Estoque: </span>
+                    <span>{{estoque}}</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">Custo: </span>
+                    <span>{{custo}}</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">Validade: </span>
+                    <span>{{validade}}</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">Ult. Alt.: </span>
+                    <span>{{data}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer text-muted">
+        <ul class="nav nav-pills float-right">
+            <li class="nav-item">
+                <a href="/produtos/edit/{{_id}}"><button class="btn btn-outline-warning">Editar Produto</button></a>
+            </li>
+            <li class="nav-item ml-3">
+                <form method="POST" action="/produtos/deletar/{{_id}}">
+                    <button type="submit" class="btn btn-outline-danger">Deletar Produto</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</div>
+{{else}}
+<h4>Não há produtos cadastrados</h4>
+{{/each}}

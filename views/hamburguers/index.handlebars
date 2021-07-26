@@ -1,0 +1,85 @@
+<h4 class="font-weight-bold">Produtos</h4>
+<a href="hamburguers/novo"><button class="btn btn-success">Novo Produto</button></a>
+{{#each hamburguers}}
+<div class="card mt-3 mb-3 hamburguer">
+    <div class="card-header">
+        <a class="nav-link disabled" href="#"><h5 class="card-title">Produto: {{nome}}</h5></a>
+    </div>
+    <div class="card-body">
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="font-weight-bold">Ingredientes: </h5>
+            </div>
+            <div class="card-body">
+            {{#each ingredientes}}
+                <div class="card-group">
+                    <div class="card">
+                        <div class="card-body">
+                            <span class="font-weight-bold">{{this}}</span>
+                        </div>
+                    </div>            
+                    <div class="card">
+                        <div class="card-body">
+                            <span class="font-weight-bold">Quantidade: </span>
+                            <span>{{lookup ../quantidade @index}}</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <span class="font-weight-bold">Custo: </span>
+                            <span>R${{lookup ../custo @index}}</span>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+            </div>
+        </div>
+        <div class="card-group mt-3">
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">Custo Total: </span>
+                    <span>R${{custoFinal}}</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">Preço de Venda: </span>
+                    <span>R${{venda}}</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">Markup: </span>
+                    <span>{{markup}}%</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">Margem: </span>
+                    <span>{{margem}}%</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">Ult. Alt.: </span>
+                    <span>{{data}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer text-muted">
+        <ul class="nav nav-pills float-right">
+            <li class="nav-item">
+                <a href="/hamburguers/edit/{{_id}}"><button class="btn btn-outline-warning">Editar Produto</button></a>
+            </li>
+            <li class="nav-item ml-3">
+                <form method="POST" action="/hamburguers/deletar/{{_id}}">
+                        <button type="submit" class="btn btn-outline-danger">Deletar Produto</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</div>
+{{else}}
+<h4 class="font-weight-bold">Não há produtos cadastrados</h4>
+{{/each}}

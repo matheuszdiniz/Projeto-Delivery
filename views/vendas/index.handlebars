@@ -1,0 +1,300 @@
+<h4 class="font-weight-bold">Vendas</h4>
+<a href="vendas/nova"><button class="btn btn-success">Nova Venda</button></a>
+<section id='paginate'>
+    
+    <div class="footer mt-3">
+        <div class="btn-group pagination mt-3">
+            <button type="button" class="btn btn-outline-secondary first">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-bar-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11.854 3.646a.5.5 0 0 1 0 .708L8.207 8l3.647 3.646a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 0 1 .708 0zM4.5 1a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 1 0v-13a.5.5 0 0 0-.5-.5z"></path>
+                </svg>
+            </button>
+
+            <button type="button" class="btn btn-outline-secondary prev">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-compact-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M9.224 1.553a.5.5 0 0 1 .223.67L6.56 8l2.888 5.776a.5.5 0 1 1-.894.448l-3-6a.5.5 0 0 1 0-.448l3-6a.5.5 0 0 1 .67-.223z"></path>
+                </svg>
+            </button>
+
+            <div class='number'>
+                <button type="button" class="btn btn-outline-secondary">
+                    <span class="visually-hidden">1</span>
+                </button>
+            </div>
+            
+
+            <button type="button" class="btn btn-outline-secondary next">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-compact-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M6.776 1.553a.5.5 0 0 1 .671.223l3 6a.5.5 0 0 1 0 .448l-3 6a.5.5 0 1 1-.894-.448L9.44 8 6.553 2.224a.5.5 0 0 1 .223-.671z"></path>
+                </svg>
+            </button>
+
+            <button type="button" class="btn btn-outline-secondary last">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-bar-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M4.146 3.646a.5.5 0 0 0 0 .708L7.793 8l-3.647 3.646a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708 0zM11.5 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13a.5.5 0 0 1 .5-.5z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <ul  id="vendasDia" class="list-group"></ul>
+    </div>
+
+    <div class='list mt-1 mb-3'>
+        {{#each vendas}}
+        <div class="card item mt-1" id='{{@index}}'>
+            <div class="card-header">
+                <div class="card-group" style="font-size: small;">
+                    <div class="card">
+                        <div class="card-body">
+                            <span class="font-weight-bold">Cliente: </span>
+                            <span>{{cliente}}</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <span class="font-weight-bold">Custo: </span>
+                            <span class="custo">R${{custoVenda}}</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <span class="font-weight-bold">Venda: </span>
+                            <span class="venda">R${{venda}}</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <span class="font-weight-bold">Data: </span>
+                            <span class='data'>{{data}}</span>
+                            <input type="hidden" class="date" value="{{date}}">
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <span class="font-weight-bold">Taxa: </span>
+                            <span class="taxa">R${{taxa}}</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <span class="font-weight-bold">Markup: </span>
+                            <span>{{markup}}%</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <span class="font-weight-bold">Margem: </span>
+                            <span>{{margem}}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body mb-3 text-sm-center">
+                <div class="card-group">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Endereço:</h5> <br>
+                            <p class="center">{{endereco}}</p> 
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Produtos:</h5>
+                            <ul class="list-group list-group">
+                            {{#each produto}}
+                                <li class="list-group-item">
+                                    <p class="card-title">{{nomeProduto this}}: {{lookup ../quantidade @index}} Un.</p>
+                                </li>
+                            {{/each}}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                <ul class="nav nav-pills float-right">
+                    <li class="nav-item">
+                        <a href="/vendas/edit/{{_id}}"><button class="btn btn-outline-warning">Editar Venda</button></a>
+                    </li>
+                    <li class="nav-item ml-3">
+                        <form method="POST" action="/vendas/deletar/{{_id}}">
+                            <button type="submit" class="btn btn-outline-danger">Deletar Venda</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        {{else}}
+        <h4 class="font-weight-bold">Não há vendas cadastrados</h4>
+        {{/each}}
+    </div> 
+</section>
+ 
+<script>
+function groupBy(objectArray, property) {
+    return objectArray.reduce((acc, obj) => {
+        let key = obj[property]
+        if (!acc[key]) {
+            acc[key] = []
+        }
+        acc[key].push(obj)
+        return acc
+    }, {})
+}
+
+const html = {
+    get: element => document.querySelector(element),
+    all: element => document.querySelectorAll(element),
+}
+const vendasDia = []
+
+const elementos = {
+    dataVenda: html.all(".data"),
+    date: html.all(".date"),
+    venda: html.all(".venda"),
+    custo: html.all(".custo"),
+    taxa: html.all(".taxa"),
+}
+
+elementos.dataVenda.forEach((element, index) => {
+    let obj = {
+        data: element.innerText,
+        date: elementos.date[index].value,
+        venda: Number.parseFloat(elementos.venda[index].innerText.split("$")[1]),
+        custo: Number.parseFloat(elementos.custo[index].innerText.split("$")[1]),
+        taxa: Number.parseFloat(elementos.taxa[index].innerText.split("$")[1]),
+        index: index,
+    }
+    vendasDia.push(obj)
+})
+
+const agruparArray = groupBy(vendasDia, "data")
+vendasDia.length = 0
+
+Array.from(Object.keys(agruparArray)).forEach((dias, index) => {
+    const obj = {
+        data: dias,
+        date: agruparArray[dias][0].date,
+        venda: 0,
+        custo: 0,
+        taxa: 0,
+        vendaPorDia: 0,
+    }
+    Array.from(agruparArray[dias]).forEach(elemento => {
+        obj.venda += Number.parseFloat(elemento.venda)
+        obj.custo += Number.parseFloat(elemento.custo)
+        obj.taxa += Number.parseFloat(elemento.taxa)
+        obj.vendaPorDia++
+    })
+    vendasDia.push(obj)
+})
+
+let page = 0
+const state = {
+    page,
+    perPage: vendasDia[page].vendaPorDia,
+    perPageAnt: 0,
+    totalPage: vendasDia.length,
+}
+
+const controls = {
+    funcSell: index => +vendasDia[index].vendaPorDia,
+    next() {
+        if (state.page < state.totalPage - 1) {
+            state.page++
+            state.perPageAnt = state.perPage
+            state.perPage = state.perPageAnt + controls.funcSell(state.page)
+        }
+    },
+    prev() {
+        if (state.page < 1) {
+            state.page = 0
+            state.perPage = controls.funcSell(0)
+            state.perPageAnt = 0
+        } else {
+            state.page--
+            state.perPage = state.perPageAnt
+            state.perPageAnt = state.perPage - controls.funcSell(state.page)
+        }
+    },
+    calcState(pagina) {
+        let state = 0
+        for (i = 0; i < pagina; i++) {
+            state += controls.funcSell(i)
+        }
+        return state
+    },
+    goTo(pagina) {
+        if (pagina <= 0) {
+            state.perPage = controls.funcSell(0)
+            state.perPageAnt = 0
+            state.page = 0
+        } else if (pagina >= state.totalPage) {
+            state.perPage = controls.calcState(state.totalPage)
+            state.perPageAnt = state.perPage - controls.funcSell(state.totalPage - 1)
+            state.page = state.totalPage - 1
+        } else if (pagina > 0) {
+            state.perPage = controls.calcState(pagina)
+            state.perPageAnt = state.perPage - controls.funcSell(pagina - 1)
+        }
+    },
+    createListeners() {
+        html.get(".first").addEventListener("click", () => {
+            controls.goTo(0)
+            update()
+        })
+        html.get(".last").addEventListener("click", () => {
+            controls.goTo(state.totalPage)
+            update()
+        })
+        html.get(".next").addEventListener("click", () => {
+            controls.next()
+            update()
+        })
+        html.get(".prev").addEventListener("click", () => {
+            controls.prev()
+            update()
+        })
+        html.get(".number").addEventListener("click", () => {
+            controls.goTo(3)
+            update()
+        })
+    },
+}
+
+const list = {
+    items: Array.from(html.all(".item")),
+    create: item => html.get(".list").appendChild(item),
+    update() {
+        html.get(".list").innerHTML = ""
+        html.get("#vendasDia").innerHTML = ""
+        const paginatedItems = list.items.slice(state.perPageAnt, state.perPage)
+        paginatedItems.forEach(list.create)
+        let element = vendasDia[state.page]
+        const li = document.createElement("li")
+        li.setAttribute("class", "list-group-item list-group-item-info")
+        li.innerHTML = `Dia: ${element.data}  |  Venda: R$${element.venda.toFixed(2)}  |  Custo: R$${element.custo.toFixed(2)}  |  Lucro: R$${(element.venda - element.custo).toFixed(2)}  |  Taxa Motoboy: R$${element.taxa.toFixed(2)}`
+        html.get("#vendasDia").appendChild(li)
+    },
+}
+
+const buttons = {
+    create() {},
+    update() {
+        html.get(".number").innerHTML = ""
+    },
+}
+
+function update() {
+    buttons.update()
+    list.update()
+}
+
+function init() {
+    update()
+    controls.createListeners()
+}
+init()
+</script>

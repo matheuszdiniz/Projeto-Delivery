@@ -1,0 +1,60 @@
+<h4 class="font-weight-bold">Compras</h4>
+<a href="compras/nova"><button class="btn btn-success">Nova Compra</button></a>
+
+{{#each compras}}
+<div class="card mt-3 mb-3 hamburguer">
+    <div class="card-header">
+        <div class='card-group'>
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">Compra: R$</span>
+                    <span>{{compraTotal}}</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">Data: </span>
+                    <span>{{data}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+    {{#each ingredientes}}
+        <div class="card-group">
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">{{this}}</span>
+                </div>
+            </div>            
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">Quantidade: </span>
+                    <span>{{lookup ../quantidade @index}}</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <span class="font-weight-bold">Custo: </span>
+                    <span>R${{lookup ../custo @index}}</span>
+                </div>
+            </div>
+        </div>
+    {{/each}}
+    </div>
+    <div class="card-footer text-muted">
+        <ul class="nav nav-pills float-right">
+            <li class="nav-item">
+                <a href="/compras/edit/{{_id}}"><button class="btn btn-outline-warning">Editar</button></a>
+            </li>
+            <li class="nav-item ml-3">
+                <form method="POST" action="/compras/deletar/{{_id}}">
+                        <button type="submit" class="btn btn-outline-danger">Deletar</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</div>
+{{else}}
+<h4 class="font-weight-bold">Em Construção!</h4>
+{{/each}}

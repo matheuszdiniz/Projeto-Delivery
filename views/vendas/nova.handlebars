@@ -1,0 +1,178 @@
+{{#each erros}}
+<div class="container alert alert-danger"><h4>{{texto}}</h4></div>
+{{else}}
+{{/each}}
+
+<h1>Cadastrar Nova Venda</h1>
+<div class="card">
+    <div class="card-body">
+        <form action="/vendas/nova/" method="POST">
+            <div class="form-row">
+                <div class="form-group col-md-8">
+                    <label for="cliente">Cliente: </label>
+                    <input type="text" name='cliente' class='form-control' required>
+                </div>
+                <div class="form-group col-md-4">
+                        <label for="data">Data Venda: </label>
+                        <input type="date" id="data" class="form-control data" name="data">
+                </div>
+            </div>
+            <label for="endereco">Endereço: </label>
+            <textarea class="form-control" name='endereco' rows="3" required></textarea>
+            <div class="form-row ingrediente" id='0'>
+                <div class="form-group col-md-8">
+                    <label for="produto">Produto: </label>
+                    {{#each hamburguer}}
+                        <input type="hidden" name="idHamb" value="{{_id}}">
+                    {{/each}}
+                    <select class="form-control produto" onchange="calcs.cost()" name='produtos'>
+                        {{#each hamburguer}}
+                        <option value="{{nome}}|{{_id}}">{{nome}}  ||  Custo: R${{custoFinal}}  ||  Venda: R${{venda}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="quantidade">Quantidade: </label>
+                    <input type="text" name="quantidade" class="form-control quantidade" onchange="calcs.cost()" value="1.000" required>
+                </div>
+                <div class="form-group col-md-0 mt-4">
+                    <button type="button" class="btn btn-primary btn-sm mt-2 create" onclick="cloneIngredients.create()">+</button>
+                </div>
+                <div class="form-group col-md-0 mt-4">
+                    <button type="button" class="btn btn-danger btn-sm mt-2 del" onclick="cloneIngredients.del({{@index}})">-</button>
+                </div>
+            </div>
+            <div id="ingredients"></div>
+            <div class="form-row">
+                <div class="form-group col-md-2">
+                    <label for="custoFinal">Custo: </label>
+                    <input type="text" id="custoFinal" class="form-control" name="custoFinal" required>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="entrega">Entrega: </label>
+                    <input type="text" id="entrega" class="form-control" name="entrega" required>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="venda">Total Venda: </label>
+                    <input type="text" id="venda" class="form-control" name="venda" required>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="markup">Markup: (%)</label>
+                    <input type="text" id="markup" class="form-control" name="markup" required>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="margem">Margem: (%)</label>
+                    <input type="text" id="margem" class="form-control" name='margem' required>
+                </div>
+                <div class="form-group col-md-2 mt-4">
+                    <button type="submit" class="btn btn-success mt-2">Vender</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const html = {
+    get: element => document.querySelector(element),
+    all: element => document.querySelectorAll(element),
+    id: element => document.getElementById(element),
+}
+
+const elements = {
+    ingredient: html.get(".ingrediente"),
+    ingredients: html.get("#ingredients"),
+    margin: html.get("#margem"),
+    markup: html.get("#markup"),
+    sell: html.get("#venda"),
+    finalCost: html.get("#custoFinal"),
+    product: html.all(".product"),
+    data: html.get(".data"),
+}
+
+const cloneIngredients = {
+    create: _ => {
+        let index = html.all('.ingrediente').length - 1
+        let indexBtn = Number.parseInt(html.all('.ingrediente')[index].id) + 1
+
+        let clone = elements.ingredient.cloneNode(true)
+        clone.setAttribute('id', indexBtn)
+        elements.ingredients.appendChild(clone)
+
+        let del = html.all('.del')[index + 1]
+        del.setAttribute("onclick", `cloneIngredients.del(${indexBtn})`)
+
+        calcs.cost()
+    },
+    del: index => {
+        let element = html.id(index)
+        element.remove()
+        calcs.cost()
+    }
+}
+const controls = {
+    createListeners: _ => {
+        html.get("#venda").addEventListener("change", () => {
+            calcs.margin()
+        })
+        html.get("#markup").addEventListener("change", () => {
+            calcs.markup()
+        })
+    },
+}
+const calcs = {
+    turnNumber: number => Number.parseFloat(number.replace(",", ".")),
+    sell: (product, i, cs, amount) => calcs.turnNumber(product[i].options[product[i].selectedIndex].text.split("$")[cs]) * amount,
+    cost: _ => {
+        let cost = 0
+        let sell = 0
+        let index = html.all('.ingrediente').length - 1
+        for (i = 0; i <= index; i++) {
+            let product = html.all(".produto")
+            let amountEl = html.all(".quantidade")[i]
+            let amount = calcs.turnNumber(amountEl.value).toFixed(2)
+            sell += calcs.sell(product, i, 2, amount)
+            cost += calcs.sell(product, i, 1, amount)
+            amountEl.value = amount
+        }
+        elements.sell.value = sell.toFixed(2)
+        elements.finalCost.value = cost.toFixed(2)
+        calcs.margin()
+    },
+    margin: _ => {
+        let sell = calcs.turnNumber(html.get("#venda").value)
+        let cost = calcs.turnNumber(html.get("#custoFinal").value)
+        elements.margin.value = (((sell - cost) / sell) * 100).toFixed(0)
+        elements.markup.value = ((sell / cost - 1) * 100).toFixed(0)
+    },
+    markup: _ => {
+        let markup = calcs.turnNumber(html.get("#markup").value)
+        let cost = calcs.turnNumber(html.get("#custoFinal").value)
+        let calc = (cost * (markup / 100 + 1)).toFixed(0)
+        elements.sell.value = calc
+        elements.margin.value = (((calc - cost) / calc) * 100).toFixed(0)
+    },
+}
+
+function setDate() {
+    let now = new Date()
+    const date = {
+        day: now.getDate(),
+        month: now.getMonth() + 1,
+        year: now.getFullYear(),
+    }
+
+    if (date.day < 10) date.day = "0" + date.day
+    if (date.month < 10) date.month = "0" + date.month
+
+    now = `${date.year}-${date.month}-${date.day}`
+    elements.data.value = now
+}
+
+function init() {
+    setDate()
+    controls.createListeners()
+    calcs.cost()
+}
+init()
+</script> 
