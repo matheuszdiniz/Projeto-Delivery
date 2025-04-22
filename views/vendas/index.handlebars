@@ -1,0 +1,186 @@
+<h4 class="fw-bold mb-4">📊 Vendas Realizadas</h4>
+<div class="card shadow-sm mb-4">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item">
+        <a class="nav-link active">Vendas</a>
+      </li>
+      <li class="nav-item">
+        <a href="/vendas/nova" class="nav-link">Nova</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Valor</th>
+            <th>Taxa</th>
+            <th>Margem</th>
+            <th>Data</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each vendas}}
+            <tr>
+              <td>{{cliente}}</td>
+              <td>R${{venda}}</td>
+              <td>R${{taxa}}</td>
+              <td>{{margem}}%</td>
+              <td>{{data}}</td>
+              <td class="text-center">
+                <a href="/vendas/edit/{{_id}}" id="{{_id}}" class="btn btn-outline-warning btn-sm">Editar</a>
+                <form method="POST" action="/produtos/deletar/{{_id}}" class="d-inline">
+                  <button type="submit" class="btn btn-outline-danger btn-sm">Deletar</button>
+                </form>
+              </td>
+            </tr>
+          {{else}}
+            <tr>
+              <td colspan="7" class="text-center">Não há produtos cadastrados</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+    <div class="d-flex justify-content-center gap-1 mt-4 mb-4" id="pagination">
+    <button id="firstPage" class="btn btn-outline-secondary btn-slim m-1">«</button>
+    <button id="prevPage" class="btn btn-outline-secondary btn-slim m-1">‹</button>
+    <button id="currentPage" class="btn btn-secondary btn-slim disabled m-1">1</button>
+    <button id="nextPage" class="btn btn-outline-secondary btn-slim m-1">›</button>
+    <button id="lastPage" class="btn btn-outline-secondary btn-slim m-1">»</button>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const rowsPerPage = 5;
+    const table = document.querySelector('table tbody');
+    const rows = table.querySelectorAll('tr');
+    const totalPages = Math.ceil(rows.length / rowsPerPage);
+    let currentPage = 1;
+
+    const currentPageBtn = document.getElementById('currentPage');
+    const btnFirst = document.getElementById('firstPage');
+    const btnPrev = document.getElementById('prevPage');
+    const btnNext = document.getElementById('nextPage');
+    const btnLast = document.getElementById('lastPage');
+
+    function showPage(page) {
+      const start = (page - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+
+      rows.forEach((row, index) => {
+        row.style.display = (index >= start && index < end) ? '' : 'none';
+      });
+
+      currentPageBtn.textContent = page;
+      currentPage = page;
+    }
+
+    btnFirst.addEventListener('click', () => {
+      if (currentPage > 1) showPage(1);
+    });
+
+    btnPrev.addEventListener('click', () => {
+      if (currentPage > 1) showPage(currentPage - 1);
+    });
+
+    btnNext.addEventListener('click', () => {
+      if (currentPage < totalPages) showPage(currentPage + 1);
+    });
+
+    btnLast.addEventListener('click', () => {
+      if (currentPage < totalPages) showPage(totalPages);
+    });
+
+    showPage(currentPage);
+  });
+</script>
+
+<style>
+.card {
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #ddd;
+}
+
+.nav-tabs .nav-item .nav-link {
+  padding: 10px 15px;
+  font-size: 16px;
+}
+
+.table {
+  width: 100%;
+  margin-bottom: 0;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  text-align: center;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+.table td {
+  font-size: 14px;
+}
+
+.table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.btn-sm {
+  font-size: 14px;
+  padding: 5px 10px;
+}
+
+.btn-outline-warning {
+  color: #ffc107;
+  border-color: #ffc107;
+}
+
+.btn-outline-danger {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+@media (max-width: 768px) {
+  .table-responsive {
+    margin-top: 20px;
+    overflow-x: auto;
+  }
+
+  .table th, .table td {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  .btn-sm {
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.d-inline {
+  display: inline-block;
+}
+</style>

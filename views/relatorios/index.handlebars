@@ -1,0 +1,24 @@
+<h4 class="fw-bold mb-4">📊 Relatório de Vendas</h4>
+
+<form method="GET" action="/relatorios/vendas" class="mb-4">
+  <div class="card shadow-sm">
+    <div class="card-body row g-2 align-items-end">
+      <div class="col-md-4">
+        <label for="data" class="form-label">Data da Venda:</label>
+        <input type="date" id="data" class="form-control form-control-sm" name="data" />
+      </div>
+      <div class="col-md-4 offset-md-4 d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary btn-slim">Gerar</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+  const dataInput = document.getElementById('data');
+  const hoje = new Date();
+  const yyyy = hoje.getFullYear();
+  const mm = String(hoje.getMonth() + 1).padStart(2, '0');
+  const dd = String(hoje.getDate()).padStart(2, '0');
+  dataInput.value = `${yyyy}-${mm}-${dd}`;
+</script>

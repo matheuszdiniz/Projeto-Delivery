@@ -1,0 +1,178 @@
+{{#each erros}}
+	<div class="container alert alert-danger">
+		<h4>{{texto}}</h4>
+	</div>
+{{else}}
+{{/each}}
+<h1>Cadastrar Nova Venda</h1>
+<div class="card">
+	<div class="card-body">
+		<form action="/vendas/nova/" method="POST">
+			<div class="form-row">
+				<div class="form-group col-md-8">
+					<label for="cliente">Cliente:</label>
+					<input type="text" name="cliente" class="form-control" required>
+				</div>
+				<div class="form-group col-md-4">
+					<label for="data">Data Venda:</label>
+					<input type="date" id="data" class="form-control" name="data" value="0">
+				</div>
+			</div>
+			<label for="endereco">Endereço:</label>
+			<input type="text" class="form-control" name="endereco" required>
+			<div class="form-row ingrediente">
+				<div class="form-group m-2 col-8">
+					<label for="produto">Produto:</label>{{#each hamburguer}}
+						<input type="hidden" name="idHamb" value="{{_id}}"> {{/each}}
+					<select class="form-control produto" name="produtos" onchange="calcs.cost()">{{#each hamburguer}}
+							<option value="{{_id}}">{{nome}}  ||  Custo: R${{custoFinal}}  ||  Venda: R${{venda}}</option>
+						{{/each}}
+					</select>
+				</div>
+				<div class="form-group m-2 col">
+					<label for="quantidade">Quantidade:</label>
+					<input type="text" name="quantidade" class="form-control quantidade" onchange="calcs.cost()" value="0" required>
+				</div>
+				<div class="form-group m-2 controlButton">
+					<button class="btn btn-primary btn-sm create" type="button">+</button>
+					<button class="btn btn-danger btn-sm del" type="button">-</button>
+					<style>
+						.controlButton{
+							display: flex;
+							flex-direction: row;
+						}
+						.controlButton button{
+							margin: 2px;
+							height: 35px;
+							margin-top: 30px;
+						}
+					</style>
+				</div>
+			</div>
+			<div id="ingredients"></div>
+			<div class="form-row">
+				<div class="form-group col-md-2">
+					<label for="custoFinal">Custo Produto:</label>
+					<input type="text" id="custoFinal" class="form-control" name="custoFinal" value="0" required>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="entrega">Taxa de entrega:</label>
+					<input type="text" id="entrega" class="form-control" name="entrega" value="0" required>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="venda">Total Venda:</label>
+					<input type="text" id="venda" class="form-control" name="venda" required>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="markup">Markup: (%)</label>
+					<input type="text" id="markup" class="form-control" name="markup" required>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="margem">Margem: (%)</label>
+					<input type="text" id="margem" class="form-control" name="margem" required>
+				</div>
+				<div class="form-group col-md-2">
+					<button type="submit" class="btn btn-success mt-4">Enviar Venda!</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+const html = {
+    get: element => document.querySelector(element),
+    class: element => document.getElementsByClassName(element),
+    id: element =>
+        document.getElementById(element)
+}
+let index =
+    html.class('ingrediente').length + 1
+const elements = {
+    ingredient: html.get('.ingrediente'),
+    index,
+    indexBtn: index,
+    ingredients: html.id('ingredients'),
+    margin: html.id('margem'),
+    markup: html.id('markup'),
+    sell: html.id('venda'),
+    finalCost: html.id('custoFinal'),
+    product: html.class('product')
+}
+const cloneIngredients = {
+    create: _ => {
+        let clone = elements.ingredient.cloneNode(true) 
+        clone.setAttribute('id', elements.index)
+        elements.ingredients.appendChild(clone)
+        let del = document.getElementsByClassName('del')[elements.indexBtn - 1]
+        del.setAttribute("onclick", `cloneIngredients.del(${elements.index})`)
+        html.class('create')[elements.indexBtn - 1].addEventListener('click', () => {
+            cloneIngredients.create()
+        })
+        elements.index++
+        elements.indexBtn++
+        calcs.cost()
+    },
+    del: index => {
+        let element = html.id(index)
+        element.remove() 
+        elements.indexBtn--
+        calcs.cost()
+    }
+}
+const controls = {
+    createListeners: _ => {
+        html.get('.create').addEventListener('click', () => {
+            cloneIngredients.create()
+        })
+        html.get('#venda').addEventListener('change', () => {
+                calcs.margin()
+            })
+            html.get('#markup').addEventListener('change', () => {
+            calcs.markup()
+        })
+    }
+}
+const calcs = {
+    turnNumber: number =>
+        Number.parseFloat(number.replace(',', '.')),
+    sell: (product, i, cs, amount) =>
+        calcs.turnNumber((product[i].options[product[i].selectedIndex].text).split('$')[cs]) *
+        amount,
+    cost: _ => {
+        let cost = 0
+        let sell = 0
+        for (i = 0; i <
+            elements.indexBtn - 1; i++) {
+            let product = html.class('produto') 
+            let amountEl = html.class('quantidade')[i]
+            let amount = calcs.turnNumber(amountEl.value).toFixed(2)
+            sell += calcs.sell(product, i, 2, amount)
+            cost += calcs.sell(product, i, 1, amount)
+            amountEl.value = amount
+        }
+        elements.sell.value = sell.toFixed(2)
+        elements.finalCost.value = cost.toFixed(2)
+        calcs.margin()
+    },
+    margin: _ => {
+        let sell =
+            calcs.turnNumber(html.id('venda').value)
+            let cost = calcs.turnNumber(html.id('custoFinal').value)
+            elements.margin.value = ((sell - cost) / sell * 100).toFixed(0)
+            elements.markup.value = (((sell / cost) - 1) * 100).toFixed(0)
+    },
+    markup: _ => {
+        let markup =
+            calcs.turnNumber(html.id('markup').value)
+            let cost = calcs.turnNumber(html.id('custoFinal').value)
+            let calc = (cost * ((markup / 100) + 1)).toFixed(0)
+            elements.sell.value = calc
+            elements.margin.value = ((calc - cost) / calc * 100).toFixed(0)
+    }
+}
+
+function init() {
+    controls.createListeners()
+}
+init()
+</script>

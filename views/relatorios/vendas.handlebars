@@ -1,0 +1,145 @@
+<style>
+  .relatorio-vendas {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    padding: 20px;
+    color: #333;
+  }
+
+  .relatorio-vendas h1 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .relatorio-vendas table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
+    page-break-inside: avoid;
+  }
+
+  .relatorio-vendas th,
+  .relatorio-vendas td {
+    border: 1px solid #999;
+    padding: 6px 8px;
+    text-align: left;
+  }
+
+  .relatorio-vendas th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+  }
+
+  .relatorio-vendas .venda-header {
+    background-color: #ddd;
+    font-weight: bold;
+  }
+
+  .relatorio-vendas .total {
+    font-weight: bold;
+    background-color: #fafafa;
+  }
+
+  .relatorio-vendas .totais-relatorio {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .relatorio-vendas .totais-relatorio th,
+  .relatorio-vendas .totais-relatorio td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+
+  .relatorio-vendas .totais-relatorio thead tr {
+    background-color: #f2f2f2;
+  }
+</style>
+
+<div class="relatorio-vendas">
+  <h1>Relatório de Vendas</h1>
+
+  {{#each vendas}}
+    <table>
+      <thead>
+        <tr class="venda-header">
+          <td colspan="6">
+            <strong>Cliente:</strong> {{cliente}} |
+            <strong>Endereço:</strong> {{endereco}} |
+            <strong>Data:</strong> {{data}}
+          </td>
+        </tr>
+        <tr>
+          <th>Produto</th>
+          <th>Qtd</th>
+          <th>Venda (R$)</th>
+          <th>Custo (R$)</th>
+          <th>Markup (%)</th>
+          <th>Margem (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each itens}}
+          <tr>
+            <td>{{nome}}</td>
+            <td>{{quantidade}}</td>
+            <td>{{venda}}</td>
+            <td>{{custoFinal}}</td>
+            <td>{{markup}}</td>
+            <td>{{margem}}</td>
+          </tr>
+        {{/each}}
+        <tr class="total">
+          <td>Totais:</td>
+          <td>{{qtdTotal}}</td>
+          <td>R$ {{vendaTotal}}</td>
+          <td>R$ {{custoVenda}}</td>
+          <td>{{markup}}</td>
+          <td>{{margem}}</td>
+        </tr>
+      </tbody>
+    </table>
+  {{/each}}
+
+  <hr>
+  <h3 style="margin-top: 30px;">Totais do Relatório</h3>
+  <table class="totais-relatorio">
+    <thead>
+      <tr>
+        <th>Total Qtd</th>
+        <th>Total de Vendas</th>
+        <th>Custo Total</th>
+        <th>Taxa Total</th>
+        <th>Markup Total</th>
+        <th>Margem Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{totais.quantidade}}</td>
+        <td>{{formataMoeda totais.venda}}</td>
+        <td>{{formataMoeda totais.custo}}</td>
+        <td>{{formataMoeda totais.taxa}}</td>
+        <td>{{formataPorcentagem totais.markup}}</td>
+        <td>{{formataPorcentagem totais.margem}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  {{#unless isPDF}}
+    <form method="GET" action="/relatorios/vendas/pdf" class="mb-4" target="_blank">
+      <div class="card shadow-sm">
+        <div class="card-body row g-2 align-items-end">
+          <div class="col-md-4">
+            <label for="data" class="form-label">Data da Venda:</label>
+            <input type="date" id="data" class="form-control form-control-sm" name="data" />
+          </div>
+          <div class="col-md-4 offset-md-4 d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary btn-slim">Gerar</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  {{/unless}}
+</div>

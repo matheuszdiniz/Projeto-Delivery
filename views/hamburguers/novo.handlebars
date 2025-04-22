@@ -1,0 +1,154 @@
+{{#each erros}}
+<div class="container alert alert-danger"><h4>{{texto}}</h4></div>
+{{else}}
+{{/each}}
+
+<h1>Cadastrar Novo Produto</h1>
+<div class="card">
+    <div class="card-body">
+        <form action="/hamburguers/novo" method="POST">
+            <div class="form-row">
+                <div class="form-group col-md-10">
+                    <label for="nome">Nome: </label>
+                    <input type="text" name='nome' placeholder="Nome do Produto" class='form-control' required>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="Novo Ingrediente" style="color: white;">Bagulho:</label>
+                    <input class="btn btn-primary" type="button" value=" Novo Ingrediente " onclick="criarNovoIngrediente();calcularCusto();">
+                </div>
+            </div>
+            <div class="form-row ingrediente">
+                <div class="form-group col-md-4">
+                    <label for="ingrediente">Ingredientes: </label>
+                    <select class="form-control produto" name='ingredientes' onchange="calcularCusto()">
+                        {{#each produtos}}
+                        <option value="{{descricao}}|{{_id}}" >{{descricao}} - R${{custo}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="quantidade">Quantidade: </label>
+                    <input type="text" name="quantidade" class="form-control quantidade" onchange="calcularCusto()" placeholder="0" required>
+                </div>
+                <div class="form-group col-md-3" >
+                    <label for="custo">Custo Ingrediente: </label>
+                    <input type="text" class="form-control custo" name="custo" placeholder="0" onchange="calcularCusto()" required>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="Deletar" style="color: white;">Bagulhoooooooooooooooooooooo:</label>
+                    <input type="button" value="Deletar Ingrediente" onclick="calcularCusto();" class="btn btn-danger deletarIg">
+                </div>
+            </div>
+            <div class="ingredientes"></div>
+            <div class="form-row">
+               <div class="form-group col-md-3" >
+                    <label for="custoFinal">Custo Produto: </label>
+                    <input type="text" id="custoFinal" class="form-control" name="custoFinal" placeholder="0" onchange="calcularMargem()" required>
+                </div>
+                <div class="form-group col-md-3" >
+                    <label for="venda">Venda: </label>
+                    <input type="text" id="venda" class="form-control" name="venda" placeholder="0" onchange="calcularMargem()" required>
+                </div>
+                <div class="form-group col-md-3" >
+                    <label for="markup">Markup: (%)</label>
+                    <input type="text" id="markup" class="form-control" name="markup" placeholder="0" onchange="vendaMarkup()" required>
+                </div>
+                <div class="form-group col-md-3" >
+                    <label for="margem">Margem: (%)</label>
+                    <input type="text" id="margem" class="form-control" placeholder="0" name='margem' required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <button type="submit" class="btn btn-success">Enviar Hamburguer!</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let ingrediente = document.getElementsByClassName("ingrediente")[0]
+    let indice = document.getElementsByClassName("ingrediente").length + 1
+    let indiceBotao = document.getElementsByClassName("ingrediente").length + 1
+
+    const parse = (item)=> {
+        if (typeof item === 'undefined'){
+            item = 0
+        } 
+        if (typeof item === 'string') {
+            if (item.indexOf(',')) {
+                item = item.replace(',', '.')
+            } 
+            item = Number.parseFloat(item)
+        } 
+        if (typeof item === 'number') {
+             item = Number.parseFloat(item)
+        } 
+        if (isNaN(item)) {
+            item = 0
+        }
+        return item
+    }
+
+    const criarNovoIngrediente = ()=>{
+        let ingredientes = document.getElementsByClassName("ingredientes")[0]
+        let clone = ingrediente.cloneNode(true)
+        clone.setAttribute('id', indice)
+        ingredientes.appendChild(clone)
+        let deletarIg = document.getElementsByClassName("deletarIg")[indiceBotao - 1]
+        deletarIg.setAttribute("onclick", "deletarIngrediente("+indice+");calcularCusto();")
+        indiceBotao++
+        indice++
+    }
+    const calcularMargem = ()=>{
+        let venda = parse(document.getElementById('venda').value)
+        let custo = parse(document.getElementById('custoFinal').value)
+        let margem = document.getElementById('margem')
+        let markup = document.getElementById('markup')
+        let calculoMargem = parse((venda - custo) / venda * 100).toFixed(0)
+        let calculoMarkup = parse(((venda / custo) - 1) * 100).toFixed(0)
+        margem.value = calculoMargem
+        markup.value = calculoMarkup
+    }
+    const calcularCusto = ()=>{
+        for(i=0; i < indiceBotao - 1; i++){
+            let produto = document.getElementsByClassName("produto")
+            let quantidade = parse(document.getElementsByClassName("quantidade")[i].value)
+            let custo = document.getElementsByClassName('custo')[i]
+            let elementoA = parse(((((produto[i].options[produto[i].selectedIndex].text)).split('$'))[1]))
+            let valorCusto = (elementoA * quantidade).toFixed(2)
+            custo.value = valorCusto
+            let custoF = document.getElementsByClassName('custo')
+            let custoFinal = 0
+            document.getElementsByClassName("quantidade")[i].value = quantidade.toFixed(3)
+            for(x=0; x < custoF.length; x++){
+                custoFinal += parse(custoF[x].value)
+                document.getElementById('custoFinal').value = custoFinal.toFixed(2)
+            }
+        }
+        i=0
+        calcularMargem()
+    }
+    const vendaMargem = ()=>{
+        let margem = parse(document.getElementById('margem').value)
+        let custo = parse(document.getElementById('custoFinal').value)
+        let venda
+    }
+    const vendaMarkup = ()=>{
+        let markup = parse(document.getElementById('markup').value)
+        let custo = parse(document.getElementById('custoFinal').value)
+        let calculoVenda = parse(custo * ((markup / 100) + 1)).toFixed(0)
+        let venda = document.getElementById('venda')
+        venda.value = calculoVenda
+        let lucroLiquido = calculoVenda - custo
+        let calculoMargem = parse(lucroLiquido / calculoVenda * 100).toFixed(0)
+        margem.value = calculoMargem
+    }
+    const deletarIngrediente = (index)=> {
+        let iddIgrediente = document.getElementById(index)
+        iddIgrediente.remove()
+        indiceBotao--
+    }
+</script>
+

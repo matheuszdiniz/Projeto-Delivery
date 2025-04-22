@@ -1,0 +1,38 @@
+{{#each erros}}
+<div class="container alert alert-danger"><h4>{{texto}}</h4></div>
+{{else}}
+{{/each}}
+
+<h1>Cadastrar Novo Produto</h1>
+<div class="card">
+    <div class="card-body">
+        <form action="/produtos/novo" method="POST">
+        <label for="descricao">Descrição: </label>
+        <input type="text" name='descricao' class='form-control' required>
+        <label for="barcode">Codigo de Barras: </label>
+        <input type="number" name='barcode'class="form-control" required>
+        <label for="apontamento">Apontamento: </label>
+        <div class="row">
+            <div class="col">
+                <input type="number" name='apontamento' class="form-control" required>
+            </div>
+            <div class="col-md-1">
+                <input type="button" value="Gerar" onclick="gerarApontamento()" class="btn btn-primary mb-3">
+            </div>
+        </div>
+        <label for="custo">Custo: </label>
+        <input type="text" name='custo' class="form-control" required>
+        <label for="estoque">Estoque: </label>
+        <input type="text" name='estoque'class="form-control" required>
+        <label for="validade">Validade: </label>
+        <input type="date" name='validade'class="form-control" required>
+        <button type="submit" class="btn btn-success mt-4">Enviar Produto!</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const gerarApontamento = ()=> {
+        document.getElementsByName('apontamento')[0].value = parseInt(Math.random() * 10).toString() + parseInt(Math.random() * 10).toString() + parseInt(Math.random() * 10).toString() + parseInt(Math.random() * 10).toString()
+    }
+</script>

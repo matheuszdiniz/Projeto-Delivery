@@ -1,0 +1,30 @@
+{{#each erros}}
+<div class="container alert alert-danger"><h4>{{texto}}</h4></div>
+{{else}}
+{{/each}}
+
+<h1>Cadastrar Novo Produto</h1>
+<div class="card">
+    <div class="card-body">
+        <form action="/produtos/edit" method="POST">
+        <input type="hidden" name='id' value="{{produto._id}}">
+        <label for="descricao">Descrição: </label>
+        <input type="text" name="descricao" value='{{produto.descricao}}' class='form-control' required>
+        <label for="barcode">Codigo de Barras: </label>
+        <input type="number" name="barcode" value='{{produto.barcode}}'class="form-control" required>
+        <label for="apontamento">Apontamento: </label>
+        <input type="number" name="apontamento" value='{{produto.apontamento}}' class="form-control" required>
+        <label for="custo">Custo: </label>
+        <input type="text" name="custo" value='{{produto.custo}}' class="form-control" required>
+        <label for="estoque">Estoque: </label>
+        <input type="text" name='estoque' value='{{produto.estoque}}'class="form-control" required>
+        <label for="validade">Validade: </label>
+        <input type="date" name='validade' id="validade" value='{{produto.validade}}'class="form-control" required>
+        <button type="submit" class="btn btn-success mt-4">Editar Produto!</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('validade').valueAsDate = new Date();
+</script>

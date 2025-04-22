@@ -1,0 +1,142 @@
+<h4 class="fw-bold mb-4">📊 Produtos</h4>
+<div class="card shadow-sm mb-4">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item">
+        <a class="nav-link active">Produtos</a>
+      </li>
+      <li class="nav-item">
+        <a href="produtos/novo" class="nav-link">Novo</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Código</th>
+            <th>Estoque</th>
+            <th>Custo</th>
+            <th>Validade</th>
+            <th>Alteração</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each produtos}}
+            <tr>
+              <td>{{descricao}}</td>
+              <td>{{apontamento}}</td>
+              <td>{{estoque}}</td>
+              <td>{{custo}}</td>
+              <td>{{validade}}</td>
+              <td>{{data}}</td>
+              <td class="text-center">
+                <a href="/produtos/edit/{{_id}}" class="btn btn-outline-warning btn-sm">Editar</a>
+                <form method="POST" action="/produtos/deletar/{{_id}}" class="d-inline">
+                  <button type="submit" class="btn btn-outline-danger btn-sm">Deletar</button>
+                </form>
+              </td>
+            </tr>
+          {{else}}
+            <tr>
+              <td colspan="7" class="text-center">Não há produtos cadastrados</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<style>
+/* Configuração básica para o card */
+.card {
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #ddd;
+}
+
+.nav-tabs .nav-item .nav-link {
+  padding: 10px 15px;
+  font-size: 16px;
+}
+
+/* Tabela de produtos */
+.table {
+  width: 100%;
+  margin-bottom: 0;
+  border-collapse: collapse; /* Remove espaço entre as bordas */
+}
+
+.table th, .table td {
+  text-align: center;
+  padding: 12px 15px;
+  border: 1px solid #ddd; /* Linha mais fina */
+}
+
+.table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+.table td {
+  font-size: 14px;
+}
+
+/* Estilo de linhas quando passa o mouse */
+.table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Botões */
+.btn-sm {
+  font-size: 14px;
+  padding: 5px 10px;
+}
+
+.btn-outline-warning {
+  color: #ffc107;
+  border-color: #ffc107;
+}
+
+.btn-outline-danger {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .table-responsive {
+    margin-top: 20px;
+    overflow-x: auto; /* Garante a rolagem horizontal */
+  }
+
+  .table th, .table td {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  .btn-sm {
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+}
+
+/* Alinhamento das ações no card */
+.text-center {
+  text-align: center !important;
+}
+
+.d-inline {
+  display: inline-block;
+}
+</style>
