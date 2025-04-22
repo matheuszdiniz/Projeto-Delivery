@@ -1,9 +1,0 @@
-node_modules
-/public/css/
-/public/img/
-/public/js/
-out
-.gitignore
-pnpm-lock.yaml
-pnpm-workspace.yaml
-pass.txt
