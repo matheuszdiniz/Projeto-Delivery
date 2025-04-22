@@ -4,8 +4,11 @@
   <div class="card shadow-sm">
     <div class="card-body row g-2 align-items-end">
       <div class="col-md-4">
-        <label for="data" class="form-label">Data da Venda:</label>
-        <input type="date" id="data" class="form-control form-control-sm" name="data" />
+        <label for="data" class="form-label">Vendas entre</label>
+        <div style="display: flex; flex-direction: row;">
+          <input type="date" id="dataInicial" class="form-control form-control-sm dias" name="dataInicial" />
+          <input type="date" id="dataFinal" class="form-control form-control-sm dias" name="dataFinal" />
+        </div>
       </div>
       <div class="col-md-4 offset-md-4 d-flex justify-content-end">
         <button type="submit" class="btn btn-primary btn-slim">Gerar</button>
@@ -15,10 +18,11 @@
 </form>
 
 <script>
-  const dataInput = document.getElementById('data');
+  const dataInput = document.getElementsByClassName('dias');
   const hoje = new Date();
   const yyyy = hoje.getFullYear();
   const mm = String(hoje.getMonth() + 1).padStart(2, '0');
   const dd = String(hoje.getDate()).padStart(2, '0');
-  dataInput.value = `${yyyy}-${mm}-${dd}`;
+  dataInput[0].value = `${yyyy}-${mm}-${dd}`;
+  dataInput[1].value = `${yyyy}-${mm}-${dd}`;
 </script>

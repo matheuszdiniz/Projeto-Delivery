@@ -1,4 +1,4 @@
-<h4 class="fw-bold mb-4">📊 Pratos</h4>
+<h4 class="fw-bold mb-4">🍔 Pratos</h4>
 <div class="card shadow-sm mb-4">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
@@ -6,14 +6,14 @@
         <a class="nav-link active">Pratos</a>
       </li>
       <li class="nav-item">
-        <a href="hamburguers/novo" class="nav-link">Novo</a>
+        <a href="hamburguers/novo" class="nav-link">➕ Novo</a>
       </li>
     </ul>
   </div>
-    {{#each hamburguers}}
   <div class="card-body" style="border-bottom: 1px solid #bdbdbd;">
-    <div class="table-responsive">
-        <div class="card-head"><h4 class="fw-bold mb-4">{{nome}}</h4></div>
+    {{#each hamburguers}}
+    <div class="table-responsive mb-4">
+      <div class="card-head"><h4 class="fw-bold mb-4">{{nome}}</h4></div>
       <table class="table table-bordered table-striped">
         <thead>
           <tr>
@@ -29,10 +29,6 @@
               <td>{{lookup ../quantidade @index}}</td>
               <td>R${{lookup ../custo @index}}</td>
             </tr>
-          {{else}}
-            <tr>
-              <td colspan="7" class="text-center">Não há produtos cadastrados</td>
-            </tr>
           {{/each}}
         </tbody>
       </table>
@@ -43,18 +39,47 @@
               <td><strong>Preço de Venda:</strong> R${{venda}}</td>
               <td><strong>Markup:</strong> {{markup}}%</td>
               <td><strong>Margem:</strong> {{margem}}%</td>
-              <td><a href="/hamburguers/edit/{{_id}}" class="btn btn-sm btn-outline-warning">Editar</a></td>
+              <td><a href="/hamburguers/edit/{{_id}}" class="btn btn-sm btn-outline-warning">✏️ Editar</a></td>
               <td>
                 <form method="POST" action="/hamburguers/deletar/{{_id}}">
-                  <button type="submit" class="btn btn-sm btn-outline-danger">Deletar</button>
+                  <button type="submit" class="btn btn-sm btn-outline-danger">🗑️ Deletar</button>
                 </form>
               </td>
             </tr>
         </tbody>
       </table>
     </div>
-  </div>
+    {{else}}
+      <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            Não há Pratos
+          </tr>
+        </thead>
+      </table>
+    </div>
     {{/each}}
+  </div>
+
+
+    <div class="d-flex justify-content-center gap-1 mt-4 mb-4">
+    {{#if (gt currentPage 1)}}
+      <a href="?page=1" class="btn btn-outline-secondary btn-slim m-1">«</a>
+      <a href="?page={{subtract currentPage 1}}" class="btn btn-outline-secondary btn-slim m-1">‹</a>
+        
+    {{/if}}
+
+    <button class="btn btn-secondary btn-slim disabled m-1">
+          Página {{currentPage}} de {{totalPages}}
+    </button>
+
+    {{#if (lt currentPage totalPages)}}
+      <a href="?page={{add currentPage 1}}" class="btn btn-outline-secondary btn-slim m-1">›</a>
+      <a href="?page={{totalPages}}" class="btn btn-outline-secondary btn-slim m-1">»</a>
+    {{/if}}
+  </div>
+
 </div>
 
 

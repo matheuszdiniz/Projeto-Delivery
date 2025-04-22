@@ -1,4 +1,4 @@
-<h4 class="fw-bold mb-4">📊 Vendas Realizadas</h4>
+<h4 class="fw-bold mb-4">💹 Vendas Realizadas</h4>
 <div class="card shadow-sm mb-4">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
@@ -6,7 +6,7 @@
         <a class="nav-link active">Vendas</a>
       </li>
       <li class="nav-item">
-        <a href="/vendas/nova" class="nav-link">Nova</a>
+        <a href="/vendas/nova" class="nav-link">➕ Nova</a>
       </li>
     </ul>
   </div>
@@ -14,6 +14,7 @@
   <div class="card-body">
     <div class="table-responsive">
       <table class="table table-bordered table-striped">
+        
         <thead>
           <tr>
             <th>Cliente</th>
@@ -24,24 +25,24 @@
             <th>Ações</th>
           </tr>
         </thead>
+        {{#each vendas}}
         <tbody>
-          {{#each vendas}}
             <tr>
               <td>{{cliente}}</td>
-              <td>R${{venda}}</td>
-              <td>R${{taxa}}</td>
-              <td>{{margem}}%</td>
+              <td>{{formataMoeda venda}}</td>
+              <td>{{formataMoeda taxa}}</td>
+              <td>{{formataPorcentagem margem}}</td>
               <td>{{data}}</td>
               <td class="text-center">
-                <a href="/vendas/edit/{{_id}}" id="{{_id}}" class="btn btn-outline-warning btn-sm">Editar</a>
-                <form method="POST" action="/produtos/deletar/{{_id}}" class="d-inline">
-                  <button type="submit" class="btn btn-outline-danger btn-sm">Deletar</button>
+                <a href="/vendas/edit/{{_id}}" id="{{_id}}" class="btn btn-outline-warning btn-sm">✏️ Editar</a>
+                <form method="POST" action="/vendas/deletar/{{_id}}" class="d-inline">
+                  <button type="submit" class="btn btn-outline-danger btn-sm">🗑️ Deletar</button>
                 </form>
               </td>
             </tr>
           {{else}}
             <tr>
-              <td colspan="7" class="text-center">Não há produtos cadastrados</td>
+              <td colspan="7" class="text-center">Não há Vendas Cadastradas</td>
             </tr>
           {{/each}}
         </tbody>
@@ -49,59 +50,18 @@
     </div>
   </div>
     <div class="d-flex justify-content-center gap-1 mt-4 mb-4" id="pagination">
-    <button id="firstPage" class="btn btn-outline-secondary btn-slim m-1">«</button>
-    <button id="prevPage" class="btn btn-outline-secondary btn-slim m-1">‹</button>
-    <button id="currentPage" class="btn btn-secondary btn-slim disabled m-1">1</button>
-    <button id="nextPage" class="btn btn-outline-secondary btn-slim m-1">›</button>
-    <button id="lastPage" class="btn btn-outline-secondary btn-slim m-1">»</button>
-  </div>
+  {{#if (gt pages 1)}}
+    <a href="?page=1" class="btn btn-outline-secondary btn-slim m-1 {{#if (eq current 1)}}disabled{{/if}}">«</a>
+    <a href="?page={{subtract current 1}}" class="btn btn-outline-secondary btn-slim m-1 {{#if (eq current 1)}}disabled{{/if}}">‹</a>
+    <span class="btn btn-secondary btn-slim disabled m-1">{{current}}</span>
+    <a href="?page={{add current 1}}" class="btn btn-outline-secondary btn-slim m-1 {{#if (eq current pages)}}disabled{{/if}}">›</a>
+    <a href="?page={{pages}}" class="btn btn-outline-secondary btn-slim m-1 {{#if (eq current pages)}}disabled{{/if}}">»</a>
+  {{/if}}
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const rowsPerPage = 5;
-    const table = document.querySelector('table tbody');
-    const rows = table.querySelectorAll('tr');
-    const totalPages = Math.ceil(rows.length / rowsPerPage);
-    let currentPage = 1;
+</div>
 
-    const currentPageBtn = document.getElementById('currentPage');
-    const btnFirst = document.getElementById('firstPage');
-    const btnPrev = document.getElementById('prevPage');
-    const btnNext = document.getElementById('nextPage');
-    const btnLast = document.getElementById('lastPage');
 
-    function showPage(page) {
-      const start = (page - 1) * rowsPerPage;
-      const end = start + rowsPerPage;
-
-      rows.forEach((row, index) => {
-        row.style.display = (index >= start && index < end) ? '' : 'none';
-      });
-
-      currentPageBtn.textContent = page;
-      currentPage = page;
-    }
-
-    btnFirst.addEventListener('click', () => {
-      if (currentPage > 1) showPage(1);
-    });
-
-    btnPrev.addEventListener('click', () => {
-      if (currentPage > 1) showPage(currentPage - 1);
-    });
-
-    btnNext.addEventListener('click', () => {
-      if (currentPage < totalPages) showPage(currentPage + 1);
-    });
-
-    btnLast.addEventListener('click', () => {
-      if (currentPage < totalPages) showPage(totalPages);
-    });
-
-    showPage(currentPage);
-  });
-</script>
 
 <style>
 .card {

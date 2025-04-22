@@ -127,19 +127,13 @@
     </tbody>
   </table>
 
-  {{#unless isPDF}}
-    <form method="GET" action="/relatorios/vendas/pdf" class="mb-4" target="_blank">
-      <div class="card shadow-sm">
-        <div class="card-body row g-2 align-items-end">
-          <div class="col-md-4">
-            <label for="data" class="form-label">Data da Venda:</label>
-            <input type="date" id="data" class="form-control form-control-sm" name="data" />
-          </div>
-          <div class="col-md-4 offset-md-4 d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary btn-slim">Gerar</button>
-          </div>
-        </div>
-      </div>
-    </form>
-  {{/unless}}
+{{#unless isPDF}}
+<form method="GET" action="/relatorios/vendas/pdf" target="_blank">
+  <input type="date" id="dataInicial" name="dataInicial" value="{{dataInicial}}" hidden/>
+  <input type="date" id="dataFinal" name="dataFinal" value="{{dataFinal}}" hidden/>
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary btn-slim">Gerar</button>
+  </div>
+</form>
+{{/unless}}
 </div>

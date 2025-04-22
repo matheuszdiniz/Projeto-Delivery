@@ -1,4 +1,4 @@
-<h4 class="fw-bold mb-4">📊 Produtos</h4>
+<h4 class="fw-bold mb-4">🏷️ Produtos</h4>
 <div class="card shadow-sm mb-4">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
@@ -6,7 +6,7 @@
         <a class="nav-link active">Produtos</a>
       </li>
       <li class="nav-item">
-        <a href="produtos/novo" class="nav-link">Novo</a>
+        <a href="produtos/novo" class="nav-link">➕ Novo</a>
       </li>
     </ul>
   </div>
@@ -25,19 +25,19 @@
             <th>Ações</th>
           </tr>
         </thead>
+        {{#each produtos}}
         <tbody>
-          {{#each produtos}}
             <tr>
               <td>{{descricao}}</td>
               <td>{{apontamento}}</td>
               <td>{{estoque}}</td>
-              <td>{{custo}}</td>
+              <td>{{formataMoeda custo}}</td>
               <td>{{validade}}</td>
               <td>{{data}}</td>
               <td class="text-center">
-                <a href="/produtos/edit/{{_id}}" class="btn btn-outline-warning btn-sm">Editar</a>
+                <a href="/produtos/edit/{{_id}}" class="btn btn-outline-warning btn-sm">✏️ Editar</a>
                 <form method="POST" action="/produtos/deletar/{{_id}}" class="d-inline">
-                  <button type="submit" class="btn btn-outline-danger btn-sm">Deletar</button>
+                  <button type="submit" class="btn btn-outline-danger btn-sm">🗑️ Deletar</button>
                 </form>
               </td>
             </tr>
@@ -50,8 +50,16 @@
       </table>
     </div>
   </div>
+  <div class="d-flex justify-content-center gap-1 mt-4 mb-4" id="pagination">
+  {{#if (gt pages 1)}}
+    <a href="?page=1" class="btn btn-outline-secondary btn-slim m-1 {{#if (eq current 1)}}disabled{{/if}}">«</a>
+    <a href="?page={{subtract current 1}}" class="btn btn-outline-secondary btn-slim m-1 {{#if (eq current 1)}}disabled{{/if}}">‹</a>
+    <span class="btn btn-secondary btn-slim disabled m-1">{{current}}</span>
+    <a href="?page={{add current 1}}" class="btn btn-outline-secondary btn-slim m-1 {{#if (eq current pages)}}disabled{{/if}}">›</a>
+    <a href="?page={{pages}}" class="btn btn-outline-secondary btn-slim m-1 {{#if (eq current pages)}}disabled{{/if}}">»</a>
+  {{/if}}
 </div>
-
+</div>
 
 <style>
 /* Configuração básica para o card */

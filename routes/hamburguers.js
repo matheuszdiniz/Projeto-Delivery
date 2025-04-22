@@ -9,14 +9,31 @@ const Produto = mongoose.model("produtos")
 
 // Definindo Rotas
 
-router.get("/", (req, res) => {
-    Hamburguer.find().lean().then(hamburguers => {
-        res.render("hamburguers/index", {hamburguers: hamburguers})
-    }).catch(error => {
-        req.flash("error_msg", "Erro ao carregar os produtos")
-        res.redirect("/")
-    })
-})
+router.get("/", async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (page - 1) * limit;
+
+    try {
+        const [hamburguers, total] = await Promise.all([
+            Hamburguer.find().skip(skip).limit(limit).lean(),
+            Hamburguer.countDocuments()
+        ]);
+
+        const totalPages = Math.ceil(total / limit);
+
+        res.render("hamburguers/index", {
+            hamburguers,
+            currentPage: page,
+            totalPages
+        });
+
+    } catch (error) {
+        req.flash("error_msg", "Erro ao carregar os hambúrgueres.");
+        res.redirect("/");
+    }
+});
+
 
 router.get("/novo", (req, res) => {
     Produto.find().lean().then(produtos => {

@@ -6,14 +6,28 @@ require("../models/Produto")
 const Produto = mongoose.model("produtos")
 
 // Definindo Rotas
-router.get("/", (req, res) => {
-    Produto.find().lean().then(produtos => {
-        res.render("produtos/index", {produtos: produtos})
-    }).catch(error => {
-        req.flash("error_msg", "Erro ao carregar os produtos")
-        res.redirect("/")
-    })
-})
+router.get("/", async (req, res) => {
+    const perPage = 5;
+    const page = parseInt(req.query.page) || 1;
+  
+    try {
+      const produtos = await Produto.find()
+        .skip((page - 1) * perPage)
+        .limit(perPage)
+        .lean();
+  
+      const totalProdutos = await Produto.countDocuments();
+  
+      res.render("produtos/index", {
+        produtos: produtos,
+        current: page,
+        pages: Math.ceil(totalProdutos / perPage),
+      });
+    } catch (error) {
+      req.flash("error_msg", "Erro ao carregar os produtos");
+      res.redirect("/");
+    }
+  });  
 
 router.get("/novo", (req, res) => {
     res.render("produtos/novo")

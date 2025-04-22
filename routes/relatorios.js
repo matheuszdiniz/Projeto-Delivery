@@ -9,44 +9,41 @@ const Venda = mongoose.model("vendas")
 const Hamburguer = mongoose.model("hamburguers")
 const Produto = mongoose.model("produtos")
 
-
-
 router.get("/", (req, res) => {
         res.render("relatorios/index")
 })
 
-router.get("/total", (req, res) => {
-    let dia = (req.originalUrl).split('=')[1].split('-')
-    let dataP = `${dia[2]}/${dia[1]}/${dia[0]}`
-    Venda.find({ data: dataP }).lean().then((vendas) => {
-        res.render("relatorios/total", {vendas: vendas})
-        }).catch(erro => {
-        req.flash("error_msg", "Houve um erro ao deletar!")
-    })
-})
-
 router.get("/vendas", async (req, res) => {
   try {
-    let dia = (req.originalUrl).split('=')[1].split('-')
-    let dataP = `${dia[2]}/${dia[1]}/${dia[0]}`
-    const vendas = await Venda.find({ data: dataP }).lean();
+    const { dataInicial, dataFinal } = req.query;
+    const dataInicialSplit = dataInicial.split('-');
+    const dataFinalSplit = dataFinal.split('-');
+    const dataInicialFormatada = `${dataInicialSplit[2]}/${dataInicialSplit[1]}/${dataInicialSplit[0]}`
+    const dataFinalFormatada = `${dataFinalSplit[2]}/${dataFinalSplit[1]}/${dataFinalSplit[0]}`
+    const vendas = await Venda.find({
+      data: { 
+        $gte: dataInicialFormatada, 
+        $lte: dataFinalFormatada
+      }
+    }).lean();
+
     const vendasComProdutos = await Promise.all(vendas.map(async (venda) => {
       const produtoIds = venda.produto.map(id => id.toString());
-        const hamburguers = await Hamburguer.find({ _id: { $in: produtoIds } }).lean();
-        const hamburguersOrdenados = produtoIds.map(id =>
-          hamburguers.find(h => h._id.toString() === id)
-        );
-        const itens = hamburguersOrdenados.map((h, index) => {
+      const hamburguers = await Hamburguer.find({ _id: { $in: produtoIds } }).lean();
+      const hamburguersOrdenados = produtoIds.map(id =>
+        hamburguers.find(h => h._id.toString() === id)
+      );
+      const itens = hamburguersOrdenados.map((h, index) => {
         const quantidade = venda.quantidade?.[index] || 0;
-          return {
-            nome: h?.nome || "Produto não encontrado",
-            quantidade,
-            custoFinal: h?.custoFinal || 0,
-            venda: h?.venda || 0,
-            markup: h?.markup || 0,
-            margem: h?.margem || 0
-          };
-        });
+        return {
+          nome: h?.nome || "Produto não encontrado",
+          quantidade,
+          custoFinal: h?.custoFinal || 0,
+          venda: h?.venda || 0,
+          markup: h?.markup || 0,
+          margem: h?.margem || 0
+        };
+      });
       return {
         cliente: venda.cliente,
         endereco: venda.endereco,
@@ -60,7 +57,7 @@ router.get("/vendas", async (req, res) => {
         qtdTotal: itens.reduce((acc, v) => acc + (parseFloat(v.quantidade) || 0), 0),
       };
     }));
-   
+
     const totais = {
       venda: vendasComProdutos.reduce((acc, v) => acc + (parseFloat(v.vendaTotal) || 0), 0),
       custo: vendasComProdutos.reduce((acc, v) => acc + (parseFloat(v.custoVenda) || 0), 0),
@@ -68,14 +65,16 @@ router.get("/vendas", async (req, res) => {
       markup: 0,
       margem: 0,
       quantidade: vendasComProdutos.reduce((acc, v) => acc + (parseFloat(v.qtdTotal) || 0), 0)
-    }
-    totais.markup = parseFloat(((totais.venda / totais.custo) - 1) * 100) || 0
-    totais.margem = parseFloat(((totais.venda - totais.custo) / totais.venda) * 100) || 0
+    };
+    totais.markup = parseFloat(((totais.venda / totais.custo) - 1) * 100) || 0;
+    totais.margem = parseFloat(((totais.venda - totais.custo) / totais.venda) * 100) || 0;
 
     res.render("relatorios/vendas", {
       vendas: vendasComProdutos,
       totais,
-      isPDF: false
+      isPDF: false,
+      dataInicial,
+      dataFinal
     });
   } catch (err) {
     console.error(err);
@@ -83,12 +82,19 @@ router.get("/vendas", async (req, res) => {
   }
 });
 
-
 router.get("/vendas/pdf", async (req, res) => {
     try {
-      let dia = (req.originalUrl).split('=')[1].split('-')
-      let dataP = `${dia[2]}/${dia[1]}/${dia[0]}`
-      const vendas = await Venda.find({ data: dataP }).lean();
+      const { dataInicial, dataFinal } = req.query;
+      const dataInicialSplit = dataInicial.split('-');
+      const dataFinalSplit = dataFinal.split('-');
+      const dataInicialFormatada = `${dataInicialSplit[2]}/${dataInicialSplit[1]}/${dataInicialSplit[0]}`
+      const dataFinalFormatada = `${dataFinalSplit[2]}/${dataFinalSplit[1]}/${dataFinalSplit[0]}`
+      const vendas = await Venda.find({
+        data: { 
+          $gte: dataInicialFormatada, 
+          $lte: dataFinalFormatada
+        }
+      }).lean();
       const vendasComProdutos = await Promise.all(vendas.map(async (venda) => {
         const produtoIds = venda.produto.map(id => id.toString());
         const hamburguers = await Hamburguer.find({ _id: { $in: produtoIds } }).lean();

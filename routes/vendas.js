@@ -12,14 +12,27 @@ const Produto = mongoose.model("produtos")
 
 // Definindo Rotas
 
-router.get("/", (req, res) => {
-    Venda.find().lean().then(vendas => {
-        res.render("vendas/index", {vendas: vendas})
-    }).catch(error => {
-        req.flash("error_msg", "Erro ao carregar as Vendas")
-        res.redirect("/vendas")
-    })
-})
+router.get("/", async (req, res) => {
+    const porPagina = 5;
+    const paginaAtual = parseInt(req.query.page) || 1;
+
+    try {
+        const totalVendas = await Venda.countDocuments();
+        const vendas = await Venda.find()
+            .skip((paginaAtual - 1) * porPagina)
+            .limit(porPagina)
+            .lean();
+        res.render("vendas/index", {
+            vendas,
+            current: paginaAtual,
+            pages: Math.ceil(totalVendas / porPagina)
+        });
+    } catch (error) {
+        req.flash("error_msg", "Erro ao carregar as Vendas");
+        res.redirect("/vendas");
+    }
+});
+
 
 
 router.get("/nova", (req, res) => {
