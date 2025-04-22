@@ -4,3 +4,6 @@ public/img
 public/js
 out
 .gitignore
+pnpm-lock.json
+pnpm-workspace.yaml
+pass.txt
