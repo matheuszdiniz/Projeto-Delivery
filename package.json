@@ -7,18 +7,21 @@
   "license": "ISC",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "build:css": "tailwindcss -i ./assets/css/tailwind.css -o ./public/css/style.css --watch"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "body-parser": "^2.2.0",
     "connect-flash": "^0.1.1",
     "consign": "^0.1.6",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "express-handlebars": "^8.0.2",
     "express-session": "^1.18.1",
     "handlebars": "^4.7.8",
     "hbs": "^4.2.0",
+    "joi": "^17.13.3",
     "mongodb": "^6.16.0",
     "mongoose": "^8.13.2",
     "multer": "1.4.5-lts.2",
@@ -27,8 +30,11 @@
     "puppeteer": "^24.7.0"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.21",
     "electron": "^35.2.0",
-    "electron-builder": "^24.13.3"
+    "electron-builder": "^24.13.3",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.4"
   },
   "build": {
     "appId": "com.matheus.gestaorestaurante",

@@ -1,109 +1,46 @@
+require('dotenv').config();
 const express = require("express");
-const handlebars = require("express-handlebars");
-const bodyParser = require("body-parser");
 const path = require("path");
-const mongoose = require("mongoose");
-const session = require("express-session");
-const flash = require("connect-flash");
-const passport = require("passport");
+const middleware = require("./config/middleware");
+const handlebarsConfig = require("./config/handlebars");
+const databaseConfig = require("./config/database");
 const produtos = require("./routes/produtos");
-const hamburguers = require("./routes/hamburguers");
-const vendas = require('./routes/vendas');
-const relatorios = require('./routes/relatorios');
-const { app: electronApp, BrowserWindow } = require('electron');
-const http = require('http');
-var app = express();
+const pratos = require("./routes/pratos");
+const vendas = require("./routes/vendas");
+const relatorios = require("./routes/relatorios");
 
-app.use(
-    session({
-        secret: "123",
-        resave: true,
-        saveUninitialized: true,
-    })
-);
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(flash());
+// Criar instância do app Express
+const app = express();
 
-app.use((req, res, next) => {
-    res.locals.success_msg = req.flash("success_msg");
-    res.locals.error_msg = req.flash("error_msg");
-    res.locals.error = req.flash("error");
-    res.locals.user = req.user || null;
-    next();
-});
+// Configurar o middleware
+middleware(app);
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// Configurar o Handlebars
+handlebarsConfig(app);
 
-const hbs = handlebars.create({
-    defaultLayout: "main",
-    helpers: {
-        nomeProduto: produto => produto.split('|')[0],
-        ifEquals: (arg1, arg2, options) => (arg1 == arg2) ? options.fn(this) : options.inverse(this),
-        formataMoeda(valor) {
-            const numero = Number.parseFloat(valor);
-            return isNaN(numero) ? "R$ 0,00" : `R$ ${numero.toFixed(2).replace('.', ',')}`;
-        },
-        formataPorcentagem(valor) {
-            const numero = Number.parseFloat(valor);
-            return isNaN(numero) ? "0,00%" : `${numero.toFixed(2).replace('.', ',')}%`;
-        },
-        add: (a, b) => a + b,
-        subtract: (a, b) => a - b,
-        gt: (a, b) => a > b,
-        lt: (a, b) => a < b,
-        eq: (a, b) => a === b
-    }
-});
+// Configurar a conexão com o banco de dados
+databaseConfig();
 
-
-app.engine("handlebars", hbs.engine);
-
-const basePath = electronApp ? electronApp.getAppPath() : __dirname;
-
+// Definir o diretório base e configurar o caminho das views
+const basePath = __dirname;
 app.set("views", path.join(basePath, "views"));
 app.set("view engine", "handlebars");
 app.use(express.static(path.join(basePath, "public")));
 
-// Mongoose
-const uri = "mongodb+srv://matheus41:37gUjOPKxCnpUpTH@cluster.vtqsggi.mongodb.net/?appName=Cluster";
-mongoose.connect(uri).then(() => {
-    console.log("Conectado ao Mongo!");
-}).catch(erro => {
-    console.log("Erro: " + erro);
-});
-
+// Rota principal
 app.get("/", (req, res) => {
     res.render("index");
 });
 
+// Rotas de produtos, pratos, vendas e relatórios
 app.use("/produtos", produtos);
-app.use("/hamburguers", hamburguers);
+app.use("/pratos", pratos);
 app.use("/vendas", vendas);
 app.use("/relatorios", relatorios);
 
-function createWindow(port) {
-    let win = new BrowserWindow({
-        width: 1536,
-        height: 864,
-        frame: true,
-        titleBarStyle: 'customButtonsOnHover',
-        webPreferences: {
-            nodeIntegration: true
-        }
-    });
-
-    win.loadURL(`http://localhost:${port}/`);
-    win.focus();
-}
-
-electronApp.whenReady().then(() => {
-    const server = http.createServer(app);
-
-    server.listen(0, () => {
-        const port = server.address().port;
-        console.log("Servidor iniciado na porta:", port);
-        createWindow(port);
-    });
+// Iniciar o servidor após a conexão com o banco de dados
+const server = app.listen(0, () => {
+    const port = server.address().port;
+    console.log("Servidor iniciado na porta:", `http://localhost:${port}`);
+    require('./config/electron')(port);
 });

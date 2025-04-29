@@ -1,135 +1,14 @@
-// Carregando Módulos
-const express = require("express")
-const router = express.Router()
-const mongoose = require("mongoose")
-require("../models/Produto")
-const Produto = mongoose.model("produtos")
+const express = require('express');
+const router = express.Router();
+const ProdutoController = require('../controllers/ProdutoController');
+const validate = require('../middlewares/validate');
+const { produtoSchema } = require('../validators/produtoValidator');
 
-// Definindo Rotas
-router.get("/", async (req, res) => {
-    const perPage = 5;
-    const page = parseInt(req.query.page) || 1;
-  
-    try {
-      const produtos = await Produto.find()
-        .skip((page - 1) * perPage)
-        .limit(perPage)
-        .lean();
-  
-      const totalProdutos = await Produto.countDocuments();
-  
-      res.render("produtos/index", {
-        produtos: produtos,
-        current: page,
-        pages: Math.ceil(totalProdutos / perPage),
-      });
-    } catch (error) {
-      req.flash("error_msg", "Erro ao carregar os produtos");
-      res.redirect("/");
-    }
-  });  
+router.get('/', ProdutoController.listar);
+router.get('/novo', ProdutoController.novo);
+router.post('/novo', validate(produtoSchema), ProdutoController.salvarNovo);
+router.get('/edit/:id', ProdutoController.editar);
+router.post('/edit', validate(produtoSchema), ProdutoController.salvarEdicao);
+router.post('/deletar/:id', ProdutoController.deletar);
 
-router.get("/novo", (req, res) => {
-    res.render("produtos/novo")
-})
-
-router.post("/novo", (req, res) => {
-    let erros = []
-    let agora = new Date()
-    let dia = agora.getDate()
-    let mes = agora.getMonth() + 1
-    if(dia < 10) dia = '0' + dia
-    if(mes < 10) mes = '0' + mes
-    agora = `${dia}/${mes}/${agora.getFullYear()}`
-    const novoProduto = {
-        descricao: req.body.descricao,
-        barcode: req.body.barcode,
-        apontamento: req.body.apontamento,
-        custo: req.body.custo,
-        estoque: req.body.estoque,
-        validade: req.body.validade,
-        data: agora
-    }
-    const val = novoProduto.validade.split('-')
-    novoProduto.validade = `${val[2]}/${val[1]}/${val[0]}`
-    const chaves = Array.from(Object.keys(novoProduto))
-    chaves.forEach(element => {
-        if (!novoProduto[element] || typeof novoProduto[element] == undefined || novoProduto[element] == null) erros.push({ texto: `${element} inconsistente.` })
-    })
-    if (erros.length > 0) {
-        res.render("produtos/novo", { erros: erros })
-    } else {
-        new Produto(novoProduto).save().then(() => {
-            req.flash("success_msg", "Produto adicionado!")
-            res.redirect("/produtos")
-        }).catch(error => {
-            req.flash("error_msg", error + "Houve um erro ao adicionar o Produto!")
-            res.redirect("/produtos/novo")
-        })
-    }
-})
-
-router.get("/edit/:id", (req, res) => {
-    Produto.findOne({ _id: req.params.id }).lean().then(produto => {
-        res.render("produtos/editar", { produto: produto })
-        }).catch(erro => {
-            req.flash("error_msg", "Esse produto não existe!")
-            res.redirect("/produtos")
-        })
-})
-
-router.post("/edit", (req, res) => {
-    Produto.findOne({ _id: req.body.id }).then(produto => {
-        let erros = []
-        let agora = new Date()
-        let dia = agora.getDate()
-        let mes = agora.getMonth() + 1
-        if(dia < 10) dia = '0' + dia
-        if(mes < 10) mes = '0' + mes
-        agora = `${dia}/${mes}/${agora.getFullYear()}`
-        const informacoes = {
-            descricao: req.body.descricao,
-            barcode: req.body.barcode,
-            apontamento: req.body.apontamento,
-            custo: req.body.custo,
-            estoque: req.body.estoque,
-            validade: req.body.validade,
-            data: agora
-        }
-        const val = informacoes.validade.split('-')
-        informacoes.validade = `${val[2]}/${val[1]}/${val[0]}`
-        const chaves = Array.from(Object.keys(informacoes))
-        chaves.forEach(element => {
-            if (!informacoes[element] || typeof informacoes[element] == undefined || informacoes[element] == null) erros.push({ texto: `${element} inconsistente` })
-        })
-        if (erros.length > 0) {
-            res.render("produtos/novo", { erros: erros })
-        } else {
-            chaves.forEach(element => {
-                produto[element] = informacoes[element]
-            })
-            produto.save().then(() => {
-                req.flash("success_msg", "Produto editado!")
-                res.redirect("/produtos")
-            }).catch(erro => {
-                req.flash("error_msg", "Erro ao editar o produto!")
-                res.redirect("/produtos")
-            })
-        }
-    }).catch(erro => {
-        req.flash("error_msg", "Erro ao editar o produto!")
-        res.redirect("/produtos")
-    })
-})
-
-router.post("/deletar/:id", (req, res) => {
-    Produto.findOneAndDelete({ _id: req.params.id }).then(() => {
-        req.flash("success_msg", "Produto deletado!")
-        res.redirect("/produtos")
-    }).catch(erro => {
-        req.flash("error_msg", "Houve um erro ao deletar!")
-        res.redirect("/produtos")
-    })
-})
-
-module.exports = router
+module.exports = router;

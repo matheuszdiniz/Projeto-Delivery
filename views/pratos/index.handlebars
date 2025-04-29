@@ -6,12 +6,12 @@
         <a class="nav-link active">Pratos</a>
       </li>
       <li class="nav-item">
-        <a href="hamburguers/novo" class="nav-link">➕ Novo</a>
+        <a href="pratos/novo" class="nav-link">➕ Novo</a>
       </li>
     </ul>
   </div>
   <div class="card-body" style="border-bottom: 1px solid #bdbdbd;">
-    {{#each hamburguers}}
+    {{#each pratos}}
     <div class="table-responsive mb-4">
       <div class="card-head"><h4 class="fw-bold mb-4">{{nome}}</h4></div>
       <table class="table table-bordered table-striped">
@@ -26,8 +26,8 @@
           {{#each ingredientes}}
             <tr>
               <td>{{this}}</td>
-              <td>{{lookup ../quantidade @index}}</td>
-              <td>R${{lookup ../custo @index}}</td>
+              <td>{{lookup ../qtdIngrediente @index}}</td>
+              <td>R${{lookup ../custoIngrediente @index}}</td>
             </tr>
           {{/each}}
         </tbody>
@@ -36,12 +36,12 @@
         <tbody>
             <tr>
               <td><strong>Custo Total:</strong> R${{custoFinal}}</td>
-              <td><strong>Preço de Venda:</strong> R${{venda}}</td>
-              <td><strong>Markup:</strong> {{markup}}%</td>
-              <td><strong>Margem:</strong> {{margem}}%</td>
-              <td><a href="/hamburguers/edit/{{_id}}" class="btn btn-sm btn-outline-warning">✏️ Editar</a></td>
+              <td><strong>Preço de Venda:</strong> R${{valorPrato}}</td>
+              <td><strong>Markup:</strong> {{markupPrato}}%</td>
+              <td><strong>Margem:</strong> {{margemPrato}}%</td>
+              <td><a href="/pratos/edit/{{_id}}" class="btn btn-sm btn-outline-warning">✏️ Editar</a></td>
               <td>
-                <form method="POST" action="/hamburguers/deletar/{{_id}}">
+                <form method="POST" action="/pratos/deletar/{{_id}}">
                   <button type="submit" class="btn btn-sm btn-outline-danger">🗑️ Deletar</button>
                 </form>
               </td>

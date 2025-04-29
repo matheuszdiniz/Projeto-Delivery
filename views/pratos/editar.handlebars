@@ -1,0 +1,80 @@
+{{#each erros}}
+<div class="alert-container"><h4 class="alert-text">{{texto}}</h4></div>
+{{/each}}
+
+<h1 class="titulo">✏️ Editar {{prato.nome}}</h1>
+<div class="card-personalizada">
+    <div class="card-body-personalizada">
+        <form action="/pratos/edit" method="POST">
+            <div class="form-row-personalizada">
+                <div class="form-group-10">
+                    <label for="nome">Nome: </label>
+                    <input type="text" name="nome" class="input-texto" value="{{prato.nome}}" required>
+                </div>
+                <div class="form-group-2">
+                    <label class="invisivel">Adicionar</label>
+                    <button class="botao-adicionar" type="button" id="btnAdicionarIngrediente">+ Ingrediente</button>
+                </div>
+            </div>
+
+            {{#each prato.idIngrediente}}
+                <div class="form-row-personalizada ingrediente">
+                    <div class="form-group-4">
+                        <label for="ingrediente">Ingredientes: </label>
+                        <select class="input-select produto" name="ingredientes" onchange="calcularCusto()">
+                            {{#each ../produtos}}
+                                {{#ifEquals _id ../this}}
+                                    <option selected value="{{../this.descricao}}|{{../this._id}}">{{../this.descricao}} - R${{../this.custo}}</option>
+                                {{else}}
+                                    <option value="{{../this.descricao}}|{{../this._id}}">{{../this.descricao}} - R${{../this.custo}}</option>
+                                {{/ifEquals}}
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="form-group-3">
+                        <label for="quantidade">Quantidade: </label>
+                        <input type="text" name="qtdIngrediente" class="input-texto quantidade" value="{{lookup ../prato.qtdIngrediente @index}}" onchange="calcularCusto()" required>
+                    </div>
+                    <div class="form-group-3">
+                        <label for="custo">Custo Ingrediente: </label>
+                        <input type="text" class="input-texto custo" name="custoIngrediente" value="{{lookup ../prato.custoIngrediente @index}}" onchange="calcularCusto()" required>
+                    </div>
+                    <div class="form-group-2">
+                        <label class="invisivel">Deletar</label>
+                        <button type="button" class="botao-deletar deletarIg">- Ingrediente</button>
+                    </div>
+                </div>
+            {{/each}}
+
+            <div class="ingredientes"></div>
+
+            <div class="form-row-personalizada">
+                <div class="form-group-3">
+                    <label for="custoFinal">Custo Produto: </label>
+                    <input type="text" id="custoFinal" class="input-texto" name="custoFinal" value="{{prato.custoFinal}}" onchange="calcularMargem()" required>
+                </div>
+                <div class="form-group-3">
+                    <label for="venda">Venda: </label>
+                    <input type="text" id="venda" class="input-texto" name="valorPrato" value="{{prato.valorPrato}}" onchange="calcularMargem()" required>
+                </div>
+                <div class="form-group-3">
+                    <label for="markup">Markup (%):</label>
+                    <input type="text" id="markup" class="input-texto" name="markupPrato" value="{{prato.markupPrato}}" onchange="vendaMarkup()" required>
+                </div>
+                <div class="form-group-3">
+                    <label for="margem">Margem (%):</label>
+                    <input type="text" id="margem" class="input-texto" name="margemPrato" value="{{prato.margemPrato}}" required>
+                </div>
+            </div>
+
+            <div class="form-row-personalizada">
+                <div class="form-group-4">
+                    <button type="submit" class="botao-enviar">Editar {{prato.nome}}</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script src="/js/PratoCalculator.js"></script>

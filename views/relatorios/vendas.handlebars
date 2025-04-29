@@ -1,62 +1,3 @@
-<style>
-  .relatorio-vendas {
-    font-family: Arial, sans-serif;
-    font-size: 12px;
-    padding: 20px;
-    color: #333;
-  }
-
-  .relatorio-vendas h1 {
-    text-align: center;
-    margin-bottom: 30px;
-  }
-
-  .relatorio-vendas table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 40px;
-    page-break-inside: avoid;
-  }
-
-  .relatorio-vendas th,
-  .relatorio-vendas td {
-    border: 1px solid #999;
-    padding: 6px 8px;
-    text-align: left;
-  }
-
-  .relatorio-vendas th {
-    background-color: #f0f0f0;
-    font-weight: bold;
-  }
-
-  .relatorio-vendas .venda-header {
-    background-color: #ddd;
-    font-weight: bold;
-  }
-
-  .relatorio-vendas .total {
-    font-weight: bold;
-    background-color: #fafafa;
-  }
-
-  .relatorio-vendas .totais-relatorio {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
-
-  .relatorio-vendas .totais-relatorio th,
-  .relatorio-vendas .totais-relatorio td {
-    border: 1px solid #ddd;
-    padding: 8px;
-  }
-
-  .relatorio-vendas .totais-relatorio thead tr {
-    background-color: #f2f2f2;
-  }
-</style>
-
 <div class="relatorio-vendas">
   <h1>Relatório de Vendas</h1>
 
@@ -84,19 +25,19 @@
           <tr>
             <td>{{nome}}</td>
             <td>{{quantidade}}</td>
-            <td>{{venda}}</td>
-            <td>{{custoFinal}}</td>
-            <td>{{markup}}</td>
-            <td>{{margem}}</td>
+            <td>{{formataMoeda venda}}</td>
+            <td>{{formataMoeda custoFinal}}</td>
+            <td>{{formataPorcentagem markup}}</td>
+            <td>{{formataPorcentagem margem}}</td>
           </tr>
         {{/each}}
         <tr class="total">
           <td>Totais:</td>
           <td>{{qtdTotal}}</td>
-          <td>R$ {{vendaTotal}}</td>
-          <td>R$ {{custoVenda}}</td>
-          <td>{{markup}}</td>
-          <td>{{margem}}</td>
+          <td>R$ {{formataMoeda vendaTotal}}</td>
+          <td>R$ {{formataMoeda custoVenda}}</td>
+          <td>{{formataPorcentagem markup}}</td>
+          <td>{{formataPorcentagem margem}}</td>
         </tr>
       </tbody>
     </table>
